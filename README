@@ -1,0 +1,1 @@
+Implementing JGroups' CASSANDRA_PING protocol on top of Apache Cassandra API.
