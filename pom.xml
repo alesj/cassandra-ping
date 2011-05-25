@@ -26,7 +26,7 @@
 
    <properties>
       <version.jgroups>2.11.0.GA</version.jgroups>
-      <version.cassandra>0.7.5</version.cassandra>
+      <version.cassandra>0.7.6</version.cassandra>
       <version.junit>4.4</version.junit>
    </properties>
 
@@ -105,6 +105,16 @@
             <enabled>true</enabled>
          </snapshots>
       </repository>
+      <repository>
+          <id>mvnrepository</id>
+          <name>Maven Repository</name>
+          <url>http://mvnrepository.com/artifact/</url>
+         <layout>default</layout>
+         <releases>
+           <enabled>true</enabled>
+           <updatePolicy>never</updatePolicy>
+         </releases>
+      </repository>
    </repositories>
 
    <dependencies>
@@ -116,7 +126,7 @@
 
       <dependency>
          <groupId>org.apache.cassandra</groupId>
-         <artifactId>apache-cassandra</artifactId>
+         <artifactId>cassandra-all</artifactId>
          <version>${version.cassandra}</version>
       </dependency>
 
