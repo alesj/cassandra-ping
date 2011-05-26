@@ -30,13 +30,18 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.cassandra.thrift.Cassandra;
 import org.apache.cassandra.thrift.Column;
+import org.apache.cassandra.thrift.ColumnOrSuperColumn;
 import org.apache.cassandra.thrift.ColumnParent;
 import org.apache.cassandra.thrift.ColumnPath;
 import org.apache.cassandra.thrift.ConsistencyLevel;
+import org.apache.cassandra.thrift.KeyRange;
+import org.apache.cassandra.thrift.KeySlice;
+import org.apache.cassandra.thrift.SlicePredicate;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TFramedTransport;
@@ -122,7 +127,9 @@ public class CASSANDRA_PING extends FILE_PING
       try
       {
          client = null;
-         tr.close();
+         TTransport temp = tr;
+         tr = null;
+         temp.close();
       }
       finally
       {
@@ -150,7 +157,31 @@ public class CASSANDRA_PING extends FILE_PING
    protected List<PingData> readAll(String clustername)
    {
       List<PingData> results = new ArrayList<PingData>();
-      // TODO -- find / query all
+      try
+      {
+         ColumnParent cp = new ColumnParent(clustername);
+         SlicePredicate predicate = new SlicePredicate();
+         predicate.setColumn_names(Collections.singletonList(ByteBuffer.wrap(DATA)));
+         KeyRange range = new KeyRange();
+         range.setStart_key(new byte[0]);
+         range.setEnd_key(new byte[0]);
+         List<KeySlice> slices = client.get_range_slices(cp, predicate, range, ConsistencyLevel.ONE);
+         for (KeySlice ks : slices)
+         {
+            List<ColumnOrSuperColumn> columns = ks.getColumns();
+            if (columns.isEmpty())
+               continue;
+
+            ColumnOrSuperColumn column = columns.get(0);
+            byte[] bytes = column.column.getValue();
+            results.add(fromBytes(bytes));
+         }
+         return results;
+      }
+      catch (Exception e)
+      {
+         log.debug(e.getMessage());
+      }
       return results;
    }
 
@@ -193,15 +224,14 @@ public class CASSANDRA_PING extends FILE_PING
     * Get ping data from bytes.
     *
     * @param bytes the bytes
-    * @param clazz the expected class
     * @return read ping data
     */
-   protected <T extends Streamable> T fromBytes(byte[] bytes, Class<T> clazz)
+   protected PingData fromBytes(byte[] bytes)
    {
       try
       {
          ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-         T data = clazz.newInstance();
+         PingData data = new PingData();
          data.readFrom(new DataInputStream(bais));
          return data;
       }

@@ -55,18 +55,22 @@ public class SmokeTestCase extends CassandraTest
       try
       {
          ping.writeToFile(data, "test");
+         try
+         {
+            List<PingData> datas = ping.readAll("test");
+            Assert.assertNotNull(datas);
+            Assert.assertEquals(1, datas.size());
+            PingData pd = datas.get(0);
+            Assert.assertEquals(data, pd);
+         }
+         finally
+         {
+            ping.remove("test", address);
+         }
 
-         List<PingData> datas = ping.readAll("test");
-         Assert.assertNotNull(datas);
-         Assert.assertEquals(1, datas.size());
-         PingData pd = datas.get(0);
-         Assert.assertEquals(data, pd);
-
-         ping.remove("test", address);
-
-         datas = ping.readAll("test");
-         Assert.assertNotNull(datas);
-         Assert.assertTrue(datas.isEmpty());
+         List<PingData> empty = ping.readAll("test");
+         Assert.assertNotNull(empty);
+         Assert.assertTrue(empty.isEmpty());
       }
       finally
       {

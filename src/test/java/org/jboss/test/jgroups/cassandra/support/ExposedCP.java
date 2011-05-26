@@ -37,6 +37,12 @@ import org.jgroups.protocols.PingData;
 public class ExposedCP extends CASSANDRA_PING
 {
    @Override
+   public void init() throws Exception
+   {
+      createRootDir();
+   }
+
+   @Override
    public void writeToFile(PingData data, String clustername)
    {
       super.writeToFile(data, clustername);
