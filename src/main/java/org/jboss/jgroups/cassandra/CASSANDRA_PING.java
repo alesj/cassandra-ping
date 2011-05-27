@@ -23,11 +23,8 @@
 
 package org.jboss.jgroups.cassandra;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import static org.jgroups.util.Util.streamableToByteBuffer;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,7 +49,7 @@ import org.jgroups.annotations.Experimental;
 import org.jgroups.annotations.Property;
 import org.jgroups.protocols.FILE_PING;
 import org.jgroups.protocols.PingData;
-import org.jgroups.util.Streamable;
+import org.jgroups.util.Util;
 
 /**
  * Simple discovery protocol which uses a Apache Cassandra DB. The local
@@ -144,8 +141,8 @@ public class CASSANDRA_PING extends FILE_PING
       {
          ColumnParent table = new ColumnParent(clustername);
          long timestamp = System.currentTimeMillis();
-         byte[] id = toBytes(data.getAddress()); // address as unique id?
-         client.insert(ByteBuffer.wrap(id), table, new Column(ByteBuffer.wrap(DATA), ByteBuffer.wrap(toBytes(data)), timestamp), ConsistencyLevel.ONE);
+         byte[] id = streamableToByteBuffer(data.getAddress()); // address as unique id?
+         client.insert(ByteBuffer.wrap(id), table, new Column(ByteBuffer.wrap(DATA), ByteBuffer.wrap(streamableToByteBuffer(data)), timestamp), ConsistencyLevel.ONE);
       }
       catch (Exception e)
       {
@@ -174,7 +171,8 @@ public class CASSANDRA_PING extends FILE_PING
 
             ColumnOrSuperColumn column = columns.get(0);
             byte[] bytes = column.column.getValue();
-            results.add(fromBytes(bytes));
+            PingData data = (PingData) Util.streamableFromByteBuffer(PingData.class, bytes);
+            results.add(data);
          }
          return results;
       }
@@ -192,52 +190,11 @@ public class CASSANDRA_PING extends FILE_PING
       {
          ColumnPath path = new ColumnPath(clustername);
          long timestamp = System.currentTimeMillis();
-         client.remove(ByteBuffer.wrap(toBytes(addr)), path, timestamp, ConsistencyLevel.ONE);
+         client.remove(ByteBuffer.wrap(streamableToByteBuffer(addr)), path, timestamp, ConsistencyLevel.ONE);
       }
       catch (Exception e)
       {
          log.debug("Cannot remove ping data.", e);
-      }
-   }
-
-   /**
-    * Get bytes from PingData.
-    *
-    * @param data the ping data
-    * @return ping data's bytes
-    */
-   protected byte[] toBytes(Streamable data)
-   {
-      try
-      {
-         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-         data.writeTo(new DataOutputStream(baos));
-         return baos.toByteArray();
-      }
-      catch (IOException e)
-      {
-         throw new IllegalArgumentException(e);
-      }
-   }
-
-   /**
-    * Get ping data from bytes.
-    *
-    * @param bytes the bytes
-    * @return read ping data
-    */
-   protected PingData fromBytes(byte[] bytes)
-   {
-      try
-      {
-         ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-         PingData data = new PingData();
-         data.readFrom(new DataInputStream(bais));
-         return data;
-      }
-      catch (Exception e)
-      {
-         throw new IllegalArgumentException(e);
       }
    }
 }
