@@ -24,6 +24,7 @@
 package org.jboss.jgroups.cassandra.plugins;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.cassandra.locator.SimpleStrategy;
@@ -105,10 +106,19 @@ public class BaseCassandraSPI implements CassandraSPI
       {
          public Boolean execute(Cassandra.Client client) throws Throwable
          {
+            KsDef ksDef = client.describe_keyspace(keyspaceName);
+            Iterator<CfDef> iter = ksDef.getCf_defsIterator();
+            while (iter.hasNext())
+            {
+               CfDef cfDef = iter.next();
+               if (cfDef.getName().equals(columnFamily))
+                  return true;
+            }
+
             client.set_keyspace(keyspaceName);
             CfDef cfDef = new CfDef(keyspaceName, columnFamily);
             client.system_add_column_family(cfDef);
-            return false; // TODO -- better way?
+            return false;
          }
       });
    }

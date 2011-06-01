@@ -25,11 +25,15 @@ package org.jboss.test.jgroups.cassandra.test;
 
 import java.util.List;
 
+import org.jboss.jgroups.cassandra.plugins.BaseCassandraSPI;
+import org.jboss.jgroups.cassandra.spi.CassandraSPI;
 import org.jboss.test.jgroups.cassandra.support.ExposedCP;
 import org.jgroups.Address;
 import org.jgroups.protocols.PingData;
 import org.jgroups.util.UUID;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -39,6 +43,24 @@ import org.junit.Test;
  */
 public class SmokeTestCase extends CassandraTest
 {
+   protected static CassandraSPI spi = new BaseCassandraSPI();
+   protected static String JGROUPS = "jgroups";
+   protected static String CLUSTER = "test";
+
+   @BeforeClass
+   public static void create()
+   {
+      spi.createKeyspace(JGROUPS);
+      spi.createColumnFamily(JGROUPS, CLUSTER);
+   }
+
+   @AfterClass
+   public static void destroy()
+   {
+      spi.dropColumnFamily(JGROUPS, CLUSTER);
+      spi.dropKeyspace(JGROUPS);
+   }
+
    @Test
    public void testBasicOps() throws Exception
    {
@@ -54,10 +76,10 @@ public class SmokeTestCase extends CassandraTest
       ping.init();
       try
       {
-         ping.writeToFile(data, "test");
+         ping.writeToFile(data, CLUSTER);
          try
          {
-            List<PingData> datas = ping.readAll("test");
+            List<PingData> datas = ping.readAll(CLUSTER);
             Assert.assertNotNull(datas);
             Assert.assertEquals(1, datas.size());
             PingData pd = datas.get(0);
@@ -65,10 +87,10 @@ public class SmokeTestCase extends CassandraTest
          }
          finally
          {
-            ping.remove("test", address);
+            ping.remove(CLUSTER, address);
          }
 
-         List<PingData> empty = ping.readAll("test");
+         List<PingData> empty = ping.readAll(CLUSTER);
          Assert.assertNotNull(empty);
          Assert.assertTrue(empty.isEmpty());
       }
