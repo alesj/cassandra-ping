@@ -21,46 +21,24 @@
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-package org.jboss.jgroups.cassandra.spi;
+package org.jboss.jgroups.cassandra.plugins;
+
+import org.apache.cassandra.thrift.Cassandra;
 
 /**
- * Simple Cassandra SPI; used to simplify communication with low level Cassandra API.
+ * Client executor interface.
  *
+ * @param <T> exact return type
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public interface CassandraSPI
+public interface ClientExecutor<T>
 {
    /**
-    * Create Cassandra keyspace.
+    * Execute action on Cassandra client.
     *
-    * @param keyspaceName the keyspace name
-    * @return true if new keyspace was created, false otherwise;
-    *         e.g. keyspace could exist before, hence we return false
+    * @param client the Cassandra client
+    * @return op result, null if void
+    * @throws Throwable for any error
     */
-   boolean createKeyspace(String keyspaceName);
-
-   /**
-    * Drop Cassandra keyspace.
-    *
-    * @param keyspaceName the keyspace name
-    */
-   void dropKeyspace(String keyspaceName);
-
-   /**
-    * Create Cassandra column family.
-    *
-    * @param keyspaceName the keyspace name
-    * @param columnFamily the column family
-    * @return true if new column family was created, false otherwise;
-    *         e.g. column family could exist before, hence we return false
-    */
-   boolean createColumnFamily(String keyspaceName, String columnFamily);
-
-   /**
-    * Drop Cassandra column family.
-    *
-    * @param keyspaceName the keyspace name
-    * @param columnFamily the column family
-    */
-   void dropColumnFamily(String keyspaceName, String columnFamily);
+   T execute(Cassandra.Client client) throws Throwable;
 }
