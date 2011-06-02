@@ -100,6 +100,11 @@ public class CASSANDRA_PING extends FILE_PING
    private TTransport tr;
    private Cassandra.Client client;
 
+   public CASSANDRA_PING()
+   {
+      setId((short) 1001); // id OK?
+   }
+
    @Override
    protected void createRootDir()
    {

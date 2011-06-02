@@ -23,12 +23,16 @@
 
 package org.jboss.test.jgroups.cassandra.test;
 
+import java.net.URL;
 import java.util.List;
 
 import org.jboss.jgroups.cassandra.plugins.BaseCassandraSPI;
 import org.jboss.jgroups.cassandra.spi.CassandraSPI;
 import org.jboss.test.jgroups.cassandra.support.ExposedCP;
 import org.jgroups.Address;
+import org.jgroups.JChannel;
+import org.jgroups.Message;
+import org.jgroups.ReceiverAdapter;
 import org.jgroups.protocols.PingData;
 import org.jgroups.util.UUID;
 import org.junit.AfterClass;
@@ -97,6 +101,34 @@ public class SmokeTestCase extends CassandraTest
       finally
       {
          ping.destroy();
+      }
+   }
+
+   @Test
+   public void testMockRun() throws Exception
+   {
+      if (isCassandraRunning() == false)
+         return;
+
+      URL url = getResource("etc/test-run.xml");
+      Assert.assertNotNull(url);
+
+      JChannel channel = new JChannel(url);
+      channel.setReceiver(new ReceiverAdapter()
+      {
+         public void receive(Message msg)
+         {
+            System.out.println("received msg from " + msg.getSrc() + ": " + msg.getObject());
+         }
+      });
+      channel.connect("MyCluster");
+      try
+      {
+         channel.send(new Message(null, null, "hello world"));
+      }
+      finally
+      {
+         channel.close();
       }
    }
 }

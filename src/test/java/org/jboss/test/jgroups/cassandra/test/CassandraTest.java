@@ -23,6 +23,7 @@
 
 package org.jboss.test.jgroups.cassandra.test;
 
+import java.net.URL;
 import java.util.logging.Logger;
 
 import org.apache.thrift.transport.TSocket;
@@ -35,6 +36,11 @@ import org.apache.thrift.transport.TSocket;
 public abstract class CassandraTest
 {
    protected Logger log = Logger.getLogger(getClass().getName());
+
+   protected URL getResource(String name)
+   {
+      return getClass().getClassLoader().getResource(name);
+   }
 
    protected boolean isCassandraRunning()
    {

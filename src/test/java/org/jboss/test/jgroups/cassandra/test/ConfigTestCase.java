@@ -42,12 +42,12 @@ import org.junit.Test;
  *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public class ConfigTestCase
+public class ConfigTestCase extends CassandraTest
 {
    @Test
    public void testXmlConfig() throws Exception
    {
-      URL url = getClass().getClassLoader().getResource("etc/test-config.xml");
+      URL url = getResource("etc/test-config.xml");
       Assert.assertNotNull(url);
 
       ProtocolStackConfigurator configurator = ConfiguratorFactory.getStackConfigurator(url);
@@ -60,7 +60,7 @@ public class ConfigTestCase
       Assert.assertNotNull(createLayer);
       createLayer.setAccessible(true);
       ProtocolStack protocolStack = new ProtocolStack();
-      Protocol protocol = (Protocol) createLayer.invoke(null, protocolStack,  pc);
+      Protocol protocol = (Protocol) createLayer.invoke(null, protocolStack, pc);
       Assert.assertTrue(protocol instanceof CASSANDRA_PING);
    }
 }
