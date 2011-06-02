@@ -35,19 +35,19 @@ import org.apache.thrift.transport.TSocket;
  */
 public abstract class CassandraTest
 {
-   protected Logger log = Logger.getLogger(getClass().getName());
+   protected static Logger log = Logger.getLogger(CassandraTest.class.getName());
 
    protected URL getResource(String name)
    {
       return getClass().getClassLoader().getResource(name);
    }
 
-   protected boolean isCassandraRunning()
+   protected static boolean isCassandraRunning()
    {
       return isCassandraRunning("localhost", 9160);
    }
 
-   protected boolean isCassandraRunning(String host, int port)
+   protected static boolean isCassandraRunning(String host, int port)
    {
       try
       {

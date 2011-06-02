@@ -54,15 +54,21 @@ public class SmokeTestCase extends CassandraTest
    @BeforeClass
    public static void create()
    {
-      spi.createKeyspace(JGROUPS);
-      spi.createColumnFamily(JGROUPS, CLUSTER);
+      if (isCassandraRunning())
+      {
+         spi.createKeyspace(JGROUPS);
+         spi.createColumnFamily(JGROUPS, CLUSTER);
+      }
    }
 
    @AfterClass
    public static void destroy()
    {
-      spi.dropColumnFamily(JGROUPS, CLUSTER);
-      spi.dropKeyspace(JGROUPS);
+      if (isCassandraRunning())
+      {
+         spi.dropColumnFamily(JGROUPS, CLUSTER);
+         spi.dropKeyspace(JGROUPS);
+      }
    }
 
    @Test
