@@ -1,0 +1,7 @@
+<config xmlns="urn:org:jgroups"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:org:jgroups file:schema/JGroups-2.8.xsd">
+
+    <org.jboss.jgroups.cassandra.CASSANDRA_PING host="some-host" port="1234" keyspace="qwert"/>
+
+</config>

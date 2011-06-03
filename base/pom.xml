@@ -2,18 +2,18 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>org.jboss</groupId>
-        <artifactId>jboss-parent</artifactId>
-        <version>5</version>
+        <groupId>org.jboss.jgroups</groupId>
+        <artifactId>cassandra-ping</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jboss.jgroups</groupId>
-    <artifactId>cassandra-ping</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>cassandra-ping-base</artifactId>
+    <packaging>jar</packaging>
     <version>1.0.0-SNAPSHOT</version>
-    <name>JBoss JGroups Cassandra Ping</name>
+    <name>JBoss JGroups Cassandra Ping Base</name>
     <url>http://www.jboss.org</url>
-    <description>JBoss JGroups Cassandra Ping</description>
+    <description>JBoss JGroups Cassandra Ping Base</description>
     <licenses>
         <license>
             <name>lgpl</name>
@@ -26,17 +26,18 @@
     </organization>
 
     <properties>
-        <version.jgroups>2.12.1.Final</version.jgroups>
-        <version.junit>4.4</version.junit>
+        <version.cassandra>0.7.6-2</version.cassandra>
     </properties>
 
-    <modules>
-        <module>base</module>
-        <!-- module>v6</module -->
-        <module>v7</module>
-    </modules>
-
     <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
+        <finalName>${artifactId}</finalName>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
         <plugins>
 
             <!-- define how we want compilation to take place
@@ -88,62 +89,32 @@
                     <downloadSources>true</downloadSources>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
-    <repositories>
-        <repository>
-            <id>jboss-public-repository-group</id>
-            <name>JBoss Public Repository Group</name>
-            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>mvnrepository</id>
-            <name>Maven Repository</name>
-            <url>http://mvnrepository.com/artifact/</url>
-            <layout>default</layout>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-        </repository>
-    </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>org.jgroups</groupId>
+            <artifactId>jgroups</artifactId>
+        </dependency>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.jboss.jgroups</groupId>
-                <artifactId>cassandra-ping-base</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.jgroups</groupId>
-                <artifactId>cassandra-ping-base</artifactId>
-                <version>${project.version}</version>
-                <type>test-jar</type>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jgroups</groupId>
-                <artifactId>jgroups</artifactId>
-                <version>${version.jgroups}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${version.junit}</version>
-                <scope>test</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>
 
