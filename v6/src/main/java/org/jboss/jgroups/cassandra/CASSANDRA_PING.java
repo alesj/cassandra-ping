@@ -26,6 +26,7 @@ package org.jboss.jgroups.cassandra;
 import static org.jgroups.util.Util.streamableToByteBuffer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.cassandra.thrift.Cassandra;
@@ -80,9 +81,8 @@ public class CASSANDRA_PING extends FILE_PING
    @Property(description = "Cassandra keyspace")
    private String keyspace = "jgroups";
 
-   @Property(description = "Cassandra column family")
-	private String columnFamily = "clusters";
-
+   @Property(name = "column-family", description = "Cassandra column family")
+   private String columnFamily = "clusters";
 
    private TTransport tr;
    private Cassandra.Client client;
@@ -97,14 +97,14 @@ public class CASSANDRA_PING extends FILE_PING
    {
       try
       {
-      	tr = new TSocket(host, port);  //new default in 0.7 is framed transport
+         tr = new TSocket(host, port);  //new default in 0.7 is framed transport
          TProtocol proto = new TBinaryProtocol(tr);
          client = new Cassandra.Client(proto);
          tr.open();
       }
       catch (Throwable e)
       {
-      	log.error("Cannot create root dir.", e);
+         log.error("Cannot create root dir.", e);
          throw new IllegalArgumentException(e);
       }
    }
@@ -128,7 +128,7 @@ public class CASSANDRA_PING extends FILE_PING
    @Override
    protected void writeToFile(PingData data, String clustername)
    {
-   	try
+      try
       {
          long timestamp = System.currentTimeMillis();
          String id = new String(streamableToByteBuffer(data.getAddress()), UTF8); // address as unique id?
@@ -152,11 +152,7 @@ public class CASSANDRA_PING extends FILE_PING
       {
          ColumnParent cp = new ColumnParent(columnFamily);
          SlicePredicate predicate = new SlicePredicate();
-
-         List<byte[]> columnNames = new ArrayList<byte[]>();
-         columnNames.add(clustername.getBytes(UTF8));
-
-         predicate.setColumn_names(columnNames);
+         predicate.setColumn_names(Collections.singletonList(clustername.getBytes(UTF8)));
          KeyRange range = new KeyRange();
          range.setStart_key("");
          range.setEnd_key("");
