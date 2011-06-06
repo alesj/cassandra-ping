@@ -47,7 +47,7 @@ import org.junit.Test;
 public abstract class AbstractSmokeTest extends AbstractCassandraTest
 {
    protected static String JGROUPS = "jgroups";
-   protected static String CLUSTER = "test";
+   protected static String CLUSTER = "clusters";
 
    protected abstract CassandraSPI createSPI();
 

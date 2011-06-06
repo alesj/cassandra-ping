@@ -57,7 +57,6 @@ import org.jgroups.util.Util;
  * added to our transport's UUID-PhysicalAddress cache.<p/>
  * The design is at doc/design/CASSANDRA_PING.txt<p/>
  * <p/>
- * todo: READ below
  * A possible mapping to Cassandra could be to take the clustername-Address (where Address is a UUID), e.g.
  * "MyCluster-15524-355142-335-1dd3" and associate the logical name and physical address with this key as value.<p/>
  * If Cassandra provides search, then to find all nodes in cluster "MyCluster", we'd have to grab all keys starting
@@ -146,7 +145,7 @@ public class CASSANDRA_PING extends FILE_PING
       {
          ColumnParent table = new ColumnParent(clustername);
          long timestamp = System.currentTimeMillis();
-         byte[] id = streamableToByteBuffer(data.getAddress()); // address as unique id?
+         byte[] id = streamableToByteBuffer(data.getAddress());
          client.insert(ByteBuffer.wrap(id), table, new Column(ByteBuffer.wrap(DATA), ByteBuffer.wrap(streamableToByteBuffer(data)), timestamp), ConsistencyLevel.ONE);
       }
       catch (Exception e)

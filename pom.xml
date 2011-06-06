@@ -27,6 +27,7 @@
 
     <properties>
         <version.jgroups>2.12.1.Final</version.jgroups>
+        <version.slf4j>1.6.1</version.slf4j>
         <version.junit>4.4</version.junit>
     </properties>
 
@@ -134,6 +135,12 @@
                 <groupId>org.jgroups</groupId>
                 <artifactId>jgroups</artifactId>
                 <version>${version.jgroups}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${version.slf4j}</version>
             </dependency>
 
             <dependency>
