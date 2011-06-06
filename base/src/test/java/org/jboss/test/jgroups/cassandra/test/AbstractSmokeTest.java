@@ -86,18 +86,13 @@ public abstract class AbstractSmokeTest extends AbstractCassandraTest
       PingData data = new PingData(address, null, true);
 
       ExposedPing ping = getPing();
-      // TODO -- map config
       ping.init();
       try
       {
          ping.writeToFile(data, CLUSTER);
          try
          {
-            List<PingData> datas = ping.readAll(CLUSTER);
-            Assert.assertNotNull(datas);
-            Assert.assertEquals(1, datas.size());
-            PingData pd = datas.get(0);
-            Assert.assertEquals(data, pd);
+            testReadAll(ping, data, CLUSTER);
          }
          finally
          {
@@ -112,6 +107,72 @@ public abstract class AbstractSmokeTest extends AbstractCassandraTest
       {
          ping.destroy();
       }
+   }
+
+   @Test
+   public void testMultipleClusters() throws Exception
+   {
+      String clusterName = "test2";
+
+      CassandraSPI spi = createSPI();
+      spi.createColumnFamily(JGROUPS, clusterName);
+      try
+      {
+         // mock data
+         Address address1 = UUID.randomUUID();
+         Address address2 = UUID.randomUUID();
+         PingData data1 = new PingData(address1, null, true);
+         PingData data2 = new PingData(address2, null, false);
+
+         ExposedPing ping = getPing();
+         ping.init();
+         try
+         {
+            ping.writeToFile(data1, CLUSTER);
+            try
+            {
+               ping.writeToFile(data2, clusterName);
+               try
+               {
+                  testReadAll(ping, data2, clusterName);
+                  testReadAll(ping, data1, CLUSTER);
+               }
+               finally
+               {
+                  ping.remove(clusterName, address2);
+               }
+            }
+            finally
+            {
+               ping.remove(CLUSTER, address1);
+            }
+
+            List<PingData> empty = ping.readAll(CLUSTER);
+            Assert.assertNotNull(empty);
+            Assert.assertTrue(empty.isEmpty());
+
+            empty = ping.readAll(clusterName);
+            Assert.assertNotNull(empty);
+            Assert.assertTrue(empty.isEmpty());
+         }
+         finally
+         {
+            ping.destroy();
+         }
+      }
+      finally
+      {
+         spi.dropColumnFamily(JGROUPS, clusterName);
+      }
+   }
+
+   protected void testReadAll(ExposedPing ping, PingData data, String clusterName)
+   {
+      List<PingData> datas = ping.readAll(clusterName);
+      Assert.assertNotNull(datas);
+      Assert.assertEquals(1, datas.size());
+      PingData pd = datas.get(0);
+      Assert.assertEquals(data, pd);
    }
 
    @Test
