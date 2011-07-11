@@ -1,27 +1,34 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>cassandra-ping</artifactId>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>cassandra-ping</artifactId>
+        <groupId>org.jboss.jgroups</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
     <groupId>org.jboss.jgroups</groupId>
+    <artifactId>cassandra-ping-cli</artifactId>
+    <packaging>jar</packaging>
     <version>1.0.0-SNAPSHOT</version>
-  </parent>
-  <groupId>org.jboss.jgroups</groupId>
-  <artifactId>cassandra-ping-cli</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
-  <dependencies>
-  	<dependency>
-  		<groupId>org.jboss.jgroups</groupId>
-  		<artifactId>cassandra-ping-v7</artifactId>
-  		<version>1.0.0-SNAPSHOT</version>
-  		<type>jar</type>
-  		<scope>compile</scope>
-  	</dependency>
-  	<dependency>
-  		<groupId>com.martiansoftware</groupId>
-  		<artifactId>jsap</artifactId>
-  		<version>2.1</version>
-  		<type>jar</type>
-  		<scope>compile</scope>
-  	</dependency>
-  </dependencies>
+    <name>JBoss JGroups Cassandra Ping CLI</name>
+    <url>http://www.jboss.org</url>
+    <description>JBoss JGroups Cassandra Ping CLI</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.jgroups</groupId>
+            <artifactId>cassandra-ping-v7</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.martiansoftware</groupId>
+            <artifactId>jsap</artifactId>
+            <version>2.1</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 </project>
