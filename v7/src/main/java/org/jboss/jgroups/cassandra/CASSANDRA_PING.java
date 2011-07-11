@@ -88,13 +88,13 @@ public class CASSANDRA_PING extends FILE_PING
    }
 
    @Property(description = "Cassandra host")
-   private String host = "localhost";
+   protected String host = "localhost";
 
    @Property(description = "Cassandra port")
-   private int port = 9160; // default?
+   protected int port = 9160; // default?
 
    @Property(description = "Cassandra keyspace")
-   private String keyspace = "jgroups";
+   protected String keyspace = "jgroups";
 
    private TTransport tr;
    private Cassandra.Client client;
