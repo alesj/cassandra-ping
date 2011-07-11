@@ -112,6 +112,9 @@ public abstract class AbstractSmokeTest extends AbstractCassandraTest
    @Test
    public void testMultipleClusters() throws Exception
    {
+      if (isCassandraRunning() == false)
+         return;
+
       String clusterName = "test2";
 
       CassandraSPI spi = createSPI();
