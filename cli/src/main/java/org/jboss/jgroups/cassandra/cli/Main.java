@@ -100,7 +100,7 @@ public class Main
    private SimpleJSAP buildCommandLineOptions() throws JSAPException
    {
       return new SimpleJSAP(
-            "Utility to manage cassandra structure.",
+            "Utility to manage Cassandra structure.",
             "",
             new Parameter[]{
                   new FlaggedOption("host", JSAP.STRING_PARSER, "localhost", JSAP.NOT_REQUIRED, 'h', "host", "Cassandra host"),
